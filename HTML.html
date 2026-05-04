@@ -1,1195 +1,1548 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TypeForge — Typing Speed Test</title>
-<style>
-  :root {
-    --bg: #0f0f13;
-    --bg2: #16161d;
-    --bg3: #1e1e28;
-    --bg4: #252533;
-    --surface: #1a1a24;
-    --border: rgba(255,255,255,0.07);
-    --border2: rgba(255,255,255,0.13);
-    --accent: #7c6af7;
-    --accent2: #a48fff;
-    --accent-soft: rgba(124,106,247,0.15);
-    --accent-glow: rgba(124,106,247,0.3);
-    --text: #e8e6f0;
-    --text2: #9896a8;
-    --text3: #5a5870;
-    --correct: #4ade80;
-    --error: #f87171;
-    --error-bg: rgba(248,113,113,0.12);
-    --warn: #fbbf24;
-    --radius: 14px;
-    --radius-sm: 8px;
-    --font-mono: 'Courier New', monospace;
-    --transition: 0.2s ease;
-  }
-  .light {
-    --bg: #f4f3fb;
-    --bg2: #eceaf7;
-    --bg3: #e2e0f5;
-    --bg4: #d8d5f0;
-    --surface: #ffffff;
-    --border: rgba(0,0,0,0.07);
-    --border2: rgba(0,0,0,0.13);
-    --accent: #6b58e8;
-    --accent2: #5444cc;
-    --accent-soft: rgba(107,88,232,0.1);
-    --accent-glow: rgba(107,88,232,0.25);
-    --text: #1a1830;
-    --text2: #5a5880;
-    --text3: #9896b8;
-    --correct: #16a34a;
-    --error: #dc2626;
-    --error-bg: rgba(220,38,38,0.08);
-  }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  html { scroll-behavior: smooth; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    transition: background var(--transition), color var(--transition);
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TypeForge — Typing Speed Test</title>
+  <style>
+    :root {
+      --bg: #0f0f13;
+      --bg2: #16161d;
+      --bg3: #1e1e28;
+      --bg4: #252533;
+      --surface: #1a1a24;
+      --border: rgba(255, 255, 255, 0.07);
+      --border2: rgba(255, 255, 255, 0.13);
+      --accent: #7c6af7;
+      --accent2: #a48fff;
+      --accent-soft: rgba(124, 106, 247, 0.15);
+      --accent-glow: rgba(124, 106, 247, 0.3);
+      --text: #e8e6f0;
+      --text2: #9896a8;
+      --text3: #5a5870;
+      --correct: #4ade80;
+      --error: #f87171;
+      --error-bg: rgba(248, 113, 113, 0.12);
+      --warn: #fbbf24;
+      --radius: 14px;
+      --radius-sm: 8px;
+      --font-mono: 'Courier New', monospace;
+      --transition: 0.2s ease;
+    }
 
-  /* SCROLLBAR */
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 3px; }
+    .light {
+      --bg: #f4f3fb;
+      --bg2: #eceaf7;
+      --bg3: #e2e0f5;
+      --bg4: #d8d5f0;
+      --surface: #ffffff;
+      --border: rgba(0, 0, 0, 0.07);
+      --border2: rgba(0, 0, 0, 0.13);
+      --accent: #6b58e8;
+      --accent2: #5444cc;
+      --accent-soft: rgba(107, 88, 232, 0.1);
+      --accent-glow: rgba(107, 88, 232, 0.25);
+      --text: #1a1830;
+      --text2: #5a5880;
+      --text3: #9896b8;
+      --correct: #16a34a;
+      --error: #dc2626;
+      --error-bg: rgba(220, 38, 38, 0.08);
+    }
 
-  /* HEADER */
-  header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.25rem 2rem;
-    border-bottom: 1px solid var(--border);
-    backdrop-filter: blur(20px);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: rgba(15,15,19,0.85);
-  }
-  .light header { background: rgba(244,243,251,0.85); }
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--text);
-    text-decoration: none;
-    letter-spacing: -0.02em;
-  }
-  .logo-icon {
-    width: 36px; height: 36px;
-    background: var(--accent);
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-  }
-  .logo span { color: var(--accent2); }
-  .header-right { display: flex; align-items: center; gap: 12px; }
-  .theme-toggle {
-    width: 40px; height: 40px;
-    border-radius: 10px;
-    border: 1px solid var(--border2);
-    background: var(--bg3);
-    color: var(--text2);
-    cursor: pointer;
-    font-size: 17px;
-    display: flex; align-items: center; justify-content: center;
-    transition: all var(--transition);
-  }
-  .theme-toggle:hover { background: var(--bg4); color: var(--text); }
-  .best-badge {
-    display: flex; align-items: center; gap: 6px;
-    padding: 6px 12px;
-    background: var(--accent-soft);
-    border: 1px solid var(--accent-glow);
-    border-radius: var(--radius-sm);
-    font-size: 13px;
-    color: var(--accent2);
-    font-weight: 500;
-  }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-  /* MAIN LAYOUT */
-  main {
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 2.5rem 1.5rem 4rem;
-  }
+    html {
+      scroll-behavior: smooth;
+    }
 
-  /* HERO TEXT */
-  .hero {
-    text-align: center;
-    margin-bottom: 2.5rem;
-  }
-  .hero h1 {
-    font-size: clamp(1.8rem, 4vw, 2.6rem);
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    background: linear-gradient(135deg, var(--text) 40%, var(--accent2));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 0.5rem;
-  }
-  .hero p {
-    color: var(--text2);
-    font-size: 1rem;
-  }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      transition: background var(--transition), color var(--transition);
+    }
 
-  /* CONTROLS STRIP */
-  .controls-strip {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 1.5rem;
-  }
-  .diff-group {
-    display: flex;
-    gap: 6px;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 4px;
-  }
-  .diff-btn {
-    padding: 6px 16px;
-    border: none;
-    border-radius: 6px;
-    background: transparent;
-    color: var(--text2);
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all var(--transition);
-  }
-  .diff-btn.active {
-    background: var(--accent);
-    color: #fff;
-  }
-  .diff-btn:hover:not(.active) { background: var(--bg4); color: var(--text); }
-  .mode-group {
-    display: flex;
-    gap: 6px;
-  }
-  .mode-btn {
-    padding: 6px 14px;
-    border: 1px solid var(--border2);
-    border-radius: 6px;
-    background: var(--bg3);
-    color: var(--text2);
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all var(--transition);
-  }
-  .mode-btn.active {
-    border-color: var(--accent);
-    color: var(--accent2);
-    background: var(--accent-soft);
-  }
-  .mode-btn:hover:not(.active) { background: var(--bg4); color: var(--text); }
+    /* SCROLLBAR */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
 
-  /* STATS ROW */
-  .stats-row {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    margin-bottom: 1.5rem;
-  }
-  .stat-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 14px 16px;
-    text-align: center;
-    transition: all var(--transition);
-    position: relative;
-    overflow: hidden;
-  }
-  .stat-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: var(--accent);
-    opacity: 0;
-    transition: opacity var(--transition);
-  }
-  .stat-card.active::before { opacity: 1; }
-  .stat-label {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--text3);
-    font-weight: 600;
-    margin-bottom: 4px;
-  }
-  .stat-value {
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: var(--text);
-    letter-spacing: -0.02em;
-    font-variant-numeric: tabular-nums;
-  }
-  .stat-value.wpm-val { color: var(--accent2); }
-  .stat-value.acc-val { color: var(--correct); }
-  .stat-unit {
-    font-size: 11px;
-    color: var(--text3);
-    margin-top: 2px;
-  }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
 
-  /* TIMER RING + PROGRESS */
-  .progress-container {
-    margin-bottom: 1.25rem;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  .timer-ring-wrap {
-    flex-shrink: 0;
-    position: relative;
-    width: 52px; height: 52px;
-  }
-  .timer-ring-wrap svg { transform: rotate(-90deg); }
-  .ring-bg { fill: none; stroke: var(--bg3); stroke-width: 4; }
-  .ring-fg {
-    fill: none; stroke: var(--accent); stroke-width: 4;
-    stroke-linecap: round;
-    transition: stroke-dashoffset 1s linear;
-  }
-  .timer-center {
-    position: absolute; top: 50%; left: 50%;
-    transform: translate(-50%,-50%);
-    font-size: 13px; font-weight: 700;
-    color: var(--text);
-    font-variant-numeric: tabular-nums;
-  }
-  .progress-bar-wrap {
-    flex: 1;
-    height: 6px;
-    background: var(--bg3);
-    border-radius: 3px;
-    overflow: hidden;
-  }
-  .progress-bar {
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
-    border-radius: 3px;
-    width: 0%;
-    transition: width 0.3s ease;
-  }
+    ::-webkit-scrollbar-thumb {
+      background: var(--bg4);
+      border-radius: 3px;
+    }
 
-  /* TYPING AREA */
-  .typing-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 2rem;
-    margin-bottom: 1.25rem;
-    position: relative;
-    transition: border-color var(--transition);
-  }
-  .typing-card.focused { border-color: var(--accent-glow); }
-  .text-display {
-    font-family: var(--font-mono);
-    font-size: clamp(0.95rem, 2vw, 1.1rem);
-    line-height: 2;
-    color: var(--text3);
-    position: relative;
-    user-select: none;
-    white-space: pre-wrap;
-    word-break: break-word;
-    min-height: 120px;
-  }
-  .char {
-    display: inline;
-    transition: color 0.05s;
-    position: relative;
-  }
-  .char.correct { color: var(--text); }
-  .char.error {
-    color: var(--error);
-    background: var(--error-bg);
-    border-radius: 2px;
-  }
-  .char.cursor::after {
-    content: '';
-    display: inline-block;
-    width: 2px;
-    height: 1.1em;
-    background: var(--accent);
-    position: absolute;
-    left: 0; bottom: 0;
-    animation: blink 1s infinite;
-    border-radius: 1px;
-  }
-  @keyframes blink { 0%,49%{opacity:1} 50%,100%{opacity:0} }
-  .text-overlay {
-    position: absolute; inset: 0;
-    cursor: text;
-  }
-  #hidden-input {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-    width: 1px; height: 1px;
-    top: 0; left: 0;
-  }
-  .click-hint {
-    position: absolute;
-    inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    background: rgba(15,15,19,0.7);
-    backdrop-filter: blur(4px);
-    border-radius: var(--radius);
-    color: var(--text2);
-    font-size: 14px;
-    gap: 8px;
-    cursor: pointer;
-    transition: opacity var(--transition);
-    border-radius: calc(var(--radius) - 2px);
-  }
-  .light .click-hint { background: rgba(244,243,251,0.75); }
-  .click-hint.hidden { opacity: 0; pointer-events: none; }
-  .click-hint-icon {
-    width: 32px; height: 32px;
-    background: var(--accent-soft);
-    border: 1px solid var(--accent-glow);
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px;
-  }
+    /* HEADER */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 2rem;
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(20px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(15, 15, 19, 0.85);
+    }
 
-  /* ACTION BUTTONS */
-  .action-row {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-  .btn {
-    display: flex; align-items: center; gap: 7px;
-    padding: 10px 22px;
-    border-radius: var(--radius-sm);
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all var(--transition);
-    border: 1px solid transparent;
-  }
-  .btn-primary {
-    background: var(--accent);
-    color: #fff;
-    border-color: var(--accent);
-  }
-  .btn-primary:hover { background: var(--accent2); border-color: var(--accent2); transform: translateY(-1px); }
-  .btn-secondary {
-    background: var(--bg3);
-    color: var(--text2);
-    border-color: var(--border2);
-  }
-  .btn-secondary:hover { background: var(--bg4); color: var(--text); transform: translateY(-1px); }
-  .btn-ghost {
-    background: transparent;
-    color: var(--text2);
-    border-color: var(--border2);
-  }
-  .btn-ghost:hover { background: var(--bg3); color: var(--text); }
-  .btn:active { transform: translateY(0) scale(0.98); }
-  .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+    .light header {
+      background: rgba(244, 243, 251, 0.85);
+    }
 
-  /* MISTAKE HEATMAP */
-  .heatmap-section {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1.25rem 1.5rem;
-    margin-top: 1.25rem;
-  }
-  .section-title {
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--text3);
-    margin-bottom: 1rem;
-  }
-  .keyboard-mini {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    align-items: center;
-  }
-  .kb-row {
-    display: flex;
-    gap: 4px;
-  }
-  .kb-key {
-    width: 32px; height: 32px;
-    border-radius: 5px;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--text3);
-    position: relative;
-    transition: all var(--transition);
-    cursor: default;
-    font-family: var(--font-mono);
-  }
-  .kb-key .err-count {
-    position: absolute;
-    top: -4px; right: -4px;
-    background: var(--error);
-    color: #fff;
-    font-size: 9px;
-    font-weight: 700;
-    border-radius: 50%;
-    width: 14px; height: 14px;
-    display: flex; align-items: center; justify-content: center;
-  }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+    }
 
-  /* HISTORY */
-  .history-section {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1.25rem 1.5rem;
-    margin-top: 1.25rem;
-    display: none;
-  }
-  .history-section.visible { display: block; }
-  .history-list {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-top: 0.5rem;
-  }
-  .history-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 12px;
-    background: var(--bg3);
-    border-radius: var(--radius-sm);
-    font-size: 13px;
-  }
-  .history-item .h-wpm { font-weight: 700; color: var(--accent2); }
-  .history-item .h-acc { color: var(--correct); }
-  .history-item .h-diff {
-    font-size: 11px;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-weight: 600;
-  }
-  .h-diff.easy { background: rgba(74,222,128,0.15); color: var(--correct); }
-  .h-diff.medium { background: rgba(251,191,36,0.15); color: var(--warn); }
-  .h-diff.hard { background: rgba(248,113,113,0.15); color: var(--error); }
-  .history-item .h-date { color: var(--text3); font-size: 11px; }
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--accent);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
 
-  /* MODAL */
-  .modal-backdrop {
-    position: fixed; inset: 0;
-    background: rgba(5,5,10,0.8);
-    backdrop-filter: blur(8px);
-    z-index: 200;
-    display: flex; align-items: center; justify-content: center;
-    padding: 1rem;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.25s ease;
-  }
-  .modal-backdrop.open { opacity: 1; pointer-events: all; }
-  .modal {
-    background: var(--bg2);
-    border: 1px solid var(--border2);
-    border-radius: 20px;
-    padding: 2.5rem;
-    max-width: 480px;
-    width: 100%;
-    transform: scale(0.92) translateY(20px);
-    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
-  }
-  .modal-backdrop.open .modal { transform: scale(1) translateY(0); }
-  .modal-header { text-align: center; margin-bottom: 2rem; }
-  .modal-emoji { font-size: 3rem; margin-bottom: 0.75rem; display: block; }
-  .modal-title { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 0.3rem; }
-  .modal-sub { color: var(--text2); font-size: 14px; }
-  .results-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 1.75rem;
-  }
-  .result-card {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 14px;
-    text-align: center;
-  }
-  .result-card .r-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); margin-bottom: 6px; }
-  .result-card .r-value { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.03em; }
-  .result-card .r-value.wpm { color: var(--accent2); }
-  .result-card .r-value.acc { color: var(--correct); }
-  .result-card .r-value.err { color: var(--error); }
-  .result-card .r-value.time { color: var(--warn); }
-  .result-card .r-unit { font-size: 12px; color: var(--text3); margin-top: 2px; }
-  .new-best-badge {
-    text-align: center;
-    margin-bottom: 1rem;
-    padding: 8px;
-    background: var(--accent-soft);
-    border: 1px solid var(--accent-glow);
-    border-radius: var(--radius-sm);
-    color: var(--accent2);
-    font-size: 13px;
-    font-weight: 600;
-    display: none;
-  }
-  .new-best-badge.show { display: block; }
-  .modal-actions { display: flex; gap: 10px; }
-  .modal-actions .btn { flex: 1; justify-content: center; }
+    .logo span {
+      color: var(--accent2);
+    }
 
-  /* RESPONSIVE */
-  @media (max-width: 600px) {
-    header { padding: 1rem; }
-    .best-badge span:first-child { display: none; }
-    main { padding: 1.5rem 1rem 3rem; }
-    .stats-row { grid-template-columns: repeat(2, 1fr); }
-    .typing-card { padding: 1.25rem; }
-    .results-grid { grid-template-columns: 1fr 1fr; }
-    .modal { padding: 1.75rem; }
-    .kb-key { width: 26px; height: 26px; font-size: 9px; }
-  }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-  /* ANIMATIONS */
-  @keyframes fadeUp {
-    from { opacity:0; transform: translateY(12px); }
-    to { opacity:1; transform: translateY(0); }
-  }
-  .fade-up { animation: fadeUp 0.4s ease forwards; }
-  @keyframes pulse-accent {
-    0%,100% { box-shadow: 0 0 0 0 var(--accent-glow); }
-    50% { box-shadow: 0 0 0 6px transparent; }
-  }
-  .stat-card.active { animation: pulse-accent 2s infinite; }
-  .shake {
-    animation: shake 0.3s ease;
-  }
-  @keyframes shake {
-    0%,100%{transform:translateX(0)}
-    25%{transform:translateX(-4px)}
-    75%{transform:translateX(4px)}
-  }
+    .theme-toggle {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      border: 1px solid var(--border2);
+      background: var(--bg3);
+      color: var(--text2);
+      cursor: pointer;
+      font-size: 17px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition);
+    }
 
-  /* PAUSE OVERLAY */
-  .pause-overlay {
-    position: absolute; inset: 0;
-    background: rgba(15,15,19,0.75);
-    backdrop-filter: blur(6px);
-    border-radius: calc(var(--radius) - 2px);
-    display: flex; align-items: center; justify-content: center;
-    color: var(--text2);
-    font-size: 14px;
-    gap: 8px;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity var(--transition);
-  }
-  .light .pause-overlay { background: rgba(244,243,251,0.8); }
-  .pause-overlay.show { opacity: 1; pointer-events: all; }
-</style>
+    .theme-toggle:hover {
+      background: var(--bg4);
+      color: var(--text);
+    }
+
+    .best-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--accent-soft);
+      border: 1px solid var(--accent-glow);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      color: var(--accent2);
+      font-weight: 500;
+    }
+
+    /* MAIN LAYOUT */
+    main {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+
+    /* HERO TEXT */
+    .hero {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero h1 {
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, var(--text) 40%, var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero p {
+      color: var(--text2);
+      font-size: 1rem;
+    }
+
+    /* CONTROLS STRIP */
+    .controls-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 1.5rem;
+    }
+
+    .diff-group {
+      display: flex;
+      gap: 6px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 4px;
+    }
+
+    .diff-btn {
+      padding: 6px 16px;
+      border: none;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--text2);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .diff-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .diff-btn:hover:not(.active) {
+      background: var(--bg4);
+      color: var(--text);
+    }
+
+    .mode-group {
+      display: flex;
+      gap: 6px;
+    }
+
+    .mode-btn {
+      padding: 6px 14px;
+      border: 1px solid var(--border2);
+      border-radius: 6px;
+      background: var(--bg3);
+      color: var(--text2);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .mode-btn.active {
+      border-color: var(--accent);
+      color: var(--accent2);
+      background: var(--accent-soft);
+    }
+
+    .mode-btn:hover:not(.active) {
+      background: var(--bg4);
+      color: var(--text);
+    }
+
+    /* STATS ROW */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      text-align: center;
+      transition: all var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--accent);
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+
+    .stat-card.active::before {
+      opacity: 1;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text3);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .stat-value.wpm-val {
+      color: var(--accent2);
+    }
+
+    .stat-value.acc-val {
+      color: var(--correct);
+    }
+
+    .stat-unit {
+      font-size: 11px;
+      color: var(--text3);
+      margin-top: 2px;
+    }
+
+    /* TIMER RING + PROGRESS */
+    .progress-container {
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .timer-ring-wrap {
+      flex-shrink: 0;
+      position: relative;
+      width: 52px;
+      height: 52px;
+    }
+
+    .timer-ring-wrap svg {
+      transform: rotate(-90deg);
+    }
+
+    .ring-bg {
+      fill: none;
+      stroke: var(--bg3);
+      stroke-width: 4;
+    }
+
+    .ring-fg {
+      fill: none;
+      stroke: var(--accent);
+      stroke-width: 4;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 1s linear;
+    }
+
+    .timer-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .progress-bar-wrap {
+      flex: 1;
+      height: 6px;
+      background: var(--bg3);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 3px;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* TYPING AREA */
+    .typing-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      margin-bottom: 1.25rem;
+      position: relative;
+      transition: border-color var(--transition);
+    }
+
+    .typing-card.focused {
+      border-color: var(--accent-glow);
+    }
+
+    .text-display {
+      font-family: var(--font-mono);
+      font-size: clamp(0.95rem, 2vw, 1.1rem);
+      line-height: 2;
+      color: var(--text3);
+      position: relative;
+      user-select: none;
+      white-space: pre-wrap;
+      word-break: break-word;
+      min-height: 120px;
+    }
+
+    .char {
+      display: inline;
+      transition: color 0.05s;
+      position: relative;
+    }
+
+    .char.correct {
+      color: var(--text);
+    }
+
+    .char.error {
+      color: var(--error);
+      background: var(--error-bg);
+      border-radius: 2px;
+    }
+
+    .char.cursor::after {
+      content: '';
+      display: inline-block;
+      width: 2px;
+      height: 1.1em;
+      background: var(--accent);
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      animation: blink 1s infinite;
+      border-radius: 1px;
+    }
+
+    @keyframes blink {
+
+      0%,
+      49% {
+        opacity: 1
+      }
+
+      50%,
+      100% {
+        opacity: 0
+      }
+    }
+
+    .text-overlay {
+      position: absolute;
+      inset: 0;
+      cursor: text;
+    }
+
+    #hidden-input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+      width: 1px;
+      height: 1px;
+      top: 0;
+      left: 0;
+    }
+
+    .click-hint {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 15, 19, 0.7);
+      backdrop-filter: blur(4px);
+      border-radius: var(--radius);
+      color: var(--text2);
+      font-size: 14px;
+      gap: 8px;
+      cursor: pointer;
+      transition: opacity var(--transition);
+      border-radius: calc(var(--radius) - 2px);
+    }
+
+    .light .click-hint {
+      background: rgba(244, 243, 251, 0.75);
+    }
+
+    .click-hint.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .click-hint-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--accent-soft);
+      border: 1px solid var(--accent-glow);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    /* ACTION BUTTONS */
+    .action-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 10px 22px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+      border: 1px solid transparent;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent2);
+      border-color: var(--accent2);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: var(--bg3);
+      color: var(--text2);
+      border-color: var(--border2);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg4);
+      color: var(--text);
+      transform: translateY(-1px);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text2);
+      border-color: var(--border2);
+    }
+
+    .btn-ghost:hover {
+      background: var(--bg3);
+      color: var(--text);
+    }
+
+    .btn:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* MISTAKE HEATMAP */
+    .heatmap-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      margin-top: 1.25rem;
+    }
+
+    .section-title {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text3);
+      margin-bottom: 1rem;
+    }
+
+    .keyboard-mini {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      align-items: center;
+    }
+
+    .kb-row {
+      display: flex;
+      gap: 4px;
+    }
+
+    .kb-key {
+      width: 32px;
+      height: 32px;
+      border-radius: 5px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text3);
+      position: relative;
+      transition: all var(--transition);
+      cursor: default;
+      font-family: var(--font-mono);
+    }
+
+    .kb-key .err-count {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: var(--error);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700;
+      border-radius: 50%;
+      width: 14px;
+      height: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* HISTORY */
+    .history-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      margin-top: 1.25rem;
+      display: none;
+    }
+
+    .history-section.visible {
+      display: block;
+    }
+
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 0.5rem;
+    }
+
+    .history-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      background: var(--bg3);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+    }
+
+    .history-item .h-wpm {
+      font-weight: 700;
+      color: var(--accent2);
+    }
+
+    .history-item .h-acc {
+      color: var(--correct);
+    }
+
+    .history-item .h-diff {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .h-diff.easy {
+      background: rgba(74, 222, 128, 0.15);
+      color: var(--correct);
+    }
+
+    .h-diff.medium {
+      background: rgba(251, 191, 36, 0.15);
+      color: var(--warn);
+    }
+
+    .h-diff.hard {
+      background: rgba(248, 113, 113, 0.15);
+      color: var(--error);
+    }
+
+    .history-item .h-date {
+      color: var(--text3);
+      font-size: 11px;
+    }
+
+    /* MODAL */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 5, 10, 0.8);
+      backdrop-filter: blur(8px);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .modal-backdrop.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal {
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: 20px;
+      padding: 2.5rem;
+      max-width: 480px;
+      width: 100%;
+      transform: scale(0.92) translateY(20px);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .modal-backdrop.open .modal {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .modal-emoji {
+      font-size: 3rem;
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.3rem;
+    }
+
+    .modal-sub {
+      color: var(--text2);
+      font-size: 14px;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 1.75rem;
+    }
+
+    .result-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      text-align: center;
+    }
+
+    .result-card .r-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text3);
+      margin-bottom: 6px;
+    }
+
+    .result-card .r-value {
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .result-card .r-value.wpm {
+      color: var(--accent2);
+    }
+
+    .result-card .r-value.acc {
+      color: var(--correct);
+    }
+
+    .result-card .r-value.err {
+      color: var(--error);
+    }
+
+    .result-card .r-value.time {
+      color: var(--warn);
+    }
+
+    .result-card .r-unit {
+      font-size: 12px;
+      color: var(--text3);
+      margin-top: 2px;
+    }
+
+    .new-best-badge {
+      text-align: center;
+      margin-bottom: 1rem;
+      padding: 8px;
+      background: var(--accent-soft);
+      border: 1px solid var(--accent-glow);
+      border-radius: var(--radius-sm);
+      color: var(--accent2);
+      font-size: 13px;
+      font-weight: 600;
+      display: none;
+    }
+
+    .new-best-badge.show {
+      display: block;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .modal-actions .btn {
+      flex: 1;
+      justify-content: center;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 600px) {
+      header {
+        padding: 1rem;
+      }
+
+      .best-badge span:first-child {
+        display: none;
+      }
+
+      main {
+        padding: 1.5rem 1rem 3rem;
+      }
+
+      .stats-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .typing-card {
+        padding: 1.25rem;
+      }
+
+      .results-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .modal {
+        padding: 1.75rem;
+      }
+
+      .kb-key {
+        width: 26px;
+        height: 26px;
+        font-size: 9px;
+      }
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .fade-up {
+      animation: fadeUp 0.4s ease forwards;
+    }
+
+    @keyframes pulse-accent {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 var(--accent-glow);
+      }
+
+      50% {
+        box-shadow: 0 0 0 6px transparent;
+      }
+    }
+
+    .stat-card.active {
+      animation: pulse-accent 2s infinite;
+    }
+
+    .shake {
+      animation: shake 0.3s ease;
+    }
+
+    @keyframes shake {
+
+      0%,
+      100% {
+        transform: translateX(0)
+      }
+
+      25% {
+        transform: translateX(-4px)
+      }
+
+      75% {
+        transform: translateX(4px)
+      }
+    }
+
+    /* PAUSE OVERLAY */
+    .pause-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 15, 19, 0.75);
+      backdrop-filter: blur(6px);
+      border-radius: calc(var(--radius) - 2px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text2);
+      font-size: 14px;
+      gap: 8px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition);
+    }
+
+    .light .pause-overlay {
+      background: rgba(244, 243, 251, 0.8);
+    }
+
+    .pause-overlay.show {
+      opacity: 1;
+      pointer-events: all;
+    }
+  </style>
 </head>
+
 <body>
 
-<header>
-  <a class="logo" href="#">
-    <div class="logo-icon">⌨️</div>
-    Type<span>Forge</span>
-  </a>
-  <div class="header-right">
-    <div class="best-badge" id="best-display">
-      <span>🏆 Best:</span>
-      <strong id="best-wpm-display">—</strong>
-      <span style="color:var(--text3)">WPM</span>
-    </div>
-    <button class="theme-toggle" id="theme-btn" title="Toggle theme" aria-label="Toggle theme">🌙</button>
-  </div>
-</header>
-
-<main>
-  <div class="hero fade-up">
-    <h1>Master Your Typing Speed</h1>
-    <p>Test your speed, track your accuracy, and watch yourself improve.</p>
-  </div>
-
-  <div class="controls-strip fade-up">
-    <div class="diff-group" role="group" aria-label="Difficulty">
-      <button class="diff-btn active" data-diff="easy">Easy</button>
-      <button class="diff-btn" data-diff="medium">Medium</button>
-      <button class="diff-btn" data-diff="hard">Hard</button>
-    </div>
-    <div class="mode-group" role="group" aria-label="Mode">
-      <button class="mode-btn active" data-mode="timed" title="60 second timed test">⏱ Timed</button>
-      <button class="mode-btn" data-mode="practice" title="Practice without a timer">✏️ Practice</button>
-    </div>
-  </div>
-
-  <div class="stats-row fade-up">
-    <div class="stat-card" id="wpm-card">
-      <div class="stat-label">WPM</div>
-      <div class="stat-value wpm-val" id="wpm-display">0</div>
-      <div class="stat-unit">words/min</div>
-    </div>
-    <div class="stat-card" id="acc-card">
-      <div class="stat-label">Accuracy</div>
-      <div class="stat-value acc-val" id="acc-display">100%</div>
-      <div class="stat-unit">correct</div>
-    </div>
-    <div class="stat-card" id="err-card">
-      <div class="stat-label">Errors</div>
-      <div class="stat-value" id="err-display">0</div>
-      <div class="stat-unit">keystrokes</div>
-    </div>
-    <div class="stat-card" id="char-card">
-      <div class="stat-label">Chars</div>
-      <div class="stat-value" id="char-display">0</div>
-      <div class="stat-unit">typed</div>
-    </div>
-  </div>
-
-  <div class="progress-container fade-up">
-    <div class="timer-ring-wrap">
-      <svg width="52" height="52" viewBox="0 0 52 52">
-        <circle class="ring-bg" cx="26" cy="26" r="22"/>
-        <circle class="ring-fg" id="ring-fg" cx="26" cy="26" r="22"
-          stroke-dasharray="138.2" stroke-dashoffset="0"/>
-      </svg>
-      <div class="timer-center" id="timer-display">60</div>
-    </div>
-    <div class="progress-bar-wrap">
-      <div class="progress-bar" id="progress-bar"></div>
-    </div>
-  </div>
-
-  <div class="typing-card fade-up" id="typing-card">
-    <div class="text-display" id="text-display"></div>
-    <div class="click-hint" id="click-hint" tabindex="0" role="button" aria-label="Click to start typing">
-      <div class="click-hint-icon">▶</div>
-      <span>Click here or press any key to start</span>
-    </div>
-    <div class="pause-overlay" id="pause-overlay">
-      <span>⏸</span> <span>Paused — click to resume</span>
-    </div>
-    <input type="text" id="hidden-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Typing input">
-  </div>
-
-  <div class="action-row fade-up">
-    <button class="btn btn-primary" id="start-btn" onclick="startTest()">▶ Start Test</button>
-    <button class="btn btn-secondary" id="pause-btn" onclick="togglePause()" disabled>⏸ Pause</button>
-    <button class="btn btn-ghost" id="reset-btn" onclick="resetTest()">↺ Reset</button>
-    <button class="btn btn-ghost" id="new-text-btn" onclick="newText()" title="Load new sample text">🔀 New Text</button>
-  </div>
-
-  <div class="heatmap-section fade-up" id="heatmap-section">
-    <div class="section-title">Mistake Heatmap</div>
-    <div class="keyboard-mini" id="keyboard-mini"></div>
-  </div>
-
-  <div class="history-section" id="history-section">
-    <div style="display:flex;align-items:center;justify-content:space-between;">
-      <div class="section-title" style="margin-bottom:0">Recent Results</div>
-      <button class="btn btn-ghost" style="padding:4px 10px;font-size:12px" onclick="clearHistory()">Clear</button>
-    </div>
-    <div class="history-list" id="history-list"></div>
-  </div>
-</main>
-
-<!-- RESULTS MODAL -->
-<div class="modal-backdrop" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-  <div class="modal">
-    <div class="modal-header">
-      <span class="modal-emoji" id="modal-emoji">🎉</span>
-      <div class="modal-title" id="modal-title">Test Complete!</div>
-      <div class="modal-sub" id="modal-sub">Here's how you did</div>
-    </div>
-    <div class="new-best-badge" id="new-best-badge">🏆 New Personal Best!</div>
-    <div class="results-grid">
-      <div class="result-card">
-        <div class="r-label">WPM</div>
-        <div class="r-value wpm" id="r-wpm">0</div>
-        <div class="r-unit">words per minute</div>
+  <header>
+    <a class="logo" href="#">
+      <div class="logo-icon">⌨️</div>
+      Type<span>Forge</span>
+    </a>
+    <div class="header-right">
+      <div class="best-badge" id="best-display">
+        <span>🏆 Best:</span>
+        <strong id="best-wpm-display">—</strong>
+        <span style="color:var(--text3)">WPM</span>
       </div>
-      <div class="result-card">
-        <div class="r-label">Accuracy</div>
-        <div class="r-value acc" id="r-acc">0%</div>
-        <div class="r-unit">correct keystrokes</div>
+      <button class="theme-toggle" id="theme-btn" title="Toggle theme" aria-label="Toggle theme">🌙</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero fade-up">
+      <h1>Master Your Typing Speed</h1>
+      <p>Test your speed, track your accuracy, and watch yourself improve.</p>
+    </div>
+
+    <div class="controls-strip fade-up">
+      <div class="diff-group" role="group" aria-label="Difficulty">
+        <button class="diff-btn active" data-diff="easy">Easy</button>
+        <button class="diff-btn" data-diff="medium">Medium</button>
+        <button class="diff-btn" data-diff="hard">Hard</button>
       </div>
-      <div class="result-card">
-        <div class="r-label">Time</div>
-        <div class="r-value time" id="r-time">0s</div>
-        <div class="r-unit">total time</div>
-      </div>
-      <div class="result-card">
-        <div class="r-label">Errors</div>
-        <div class="r-value err" id="r-errors">0</div>
-        <div class="r-unit">total mistakes</div>
+      <div class="mode-group" role="group" aria-label="Mode">
+        <button class="mode-btn active" data-mode="timed" title="60 second timed test">⏱ Timed</button>
+        <button class="mode-btn" data-mode="practice" title="Practice without a timer">✏️ Practice</button>
       </div>
     </div>
-    <div class="modal-actions">
-      <button class="btn btn-primary" onclick="tryAgain()">↺ Try Again</button>
-      <button class="btn btn-secondary" onclick="closeModal()">✕ Close</button>
+
+    <div class="stats-row fade-up">
+      <div class="stat-card" id="wpm-card">
+        <div class="stat-label">WPM</div>
+        <div class="stat-value wpm-val" id="wpm-display">0</div>
+        <div class="stat-unit">words/min</div>
+      </div>
+      <div class="stat-card" id="acc-card">
+        <div class="stat-label">Accuracy</div>
+        <div class="stat-value acc-val" id="acc-display">100%</div>
+        <div class="stat-unit">correct</div>
+      </div>
+      <div class="stat-card" id="err-card">
+        <div class="stat-label">Errors</div>
+        <div class="stat-value" id="err-display">0</div>
+        <div class="stat-unit">keystrokes</div>
+      </div>
+      <div class="stat-card" id="char-card">
+        <div class="stat-label">Chars</div>
+        <div class="stat-value" id="char-display">0</div>
+        <div class="stat-unit">typed</div>
+      </div>
+    </div>
+
+    <div class="progress-container fade-up">
+      <div class="timer-ring-wrap">
+        <svg width="52" height="52" viewBox="0 0 52 52">
+          <circle class="ring-bg" cx="26" cy="26" r="22" />
+          <circle class="ring-fg" id="ring-fg" cx="26" cy="26" r="22" stroke-dasharray="138.2" stroke-dashoffset="0" />
+        </svg>
+        <div class="timer-center" id="timer-display">60</div>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
+    </div>
+
+    <div class="typing-card fade-up" id="typing-card">
+      <div class="text-display" id="text-display"></div>
+      <div class="click-hint" id="click-hint" tabindex="0" role="button" aria-label="Click to start typing">
+        <div class="click-hint-icon">▶</div>
+        <span>Click here or press any key to start</span>
+      </div>
+      <div class="pause-overlay" id="pause-overlay">
+        <span>⏸</span> <span>Paused — click to resume</span>
+      </div>
+      <input type="text" id="hidden-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+        aria-label="Typing input">
+    </div>
+
+    <div class="action-row fade-up">
+      <button class="btn btn-primary" id="start-btn" onclick="startTest()">▶ Start Test</button>
+      <button class="btn btn-secondary" id="pause-btn" onclick="togglePause()" disabled>⏸ Pause</button>
+      <button class="btn btn-ghost" id="reset-btn" onclick="resetTest()">↺ Reset</button>
+      <button class="btn btn-ghost" id="new-text-btn" onclick="newText()" title="Load new sample text">🔀 New
+        Text</button>
+    </div>
+
+    <div class="heatmap-section fade-up" id="heatmap-section">
+      <div class="section-title">Mistake Heatmap</div>
+      <div class="keyboard-mini" id="keyboard-mini"></div>
+    </div>
+
+    <div class="history-section" id="history-section">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div class="section-title" style="margin-bottom:0">Recent Results</div>
+        <button class="btn btn-ghost" style="padding:4px 10px;font-size:12px" onclick="clearHistory()">Clear</button>
+      </div>
+      <div class="history-list" id="history-list"></div>
+    </div>
+  </main>
+
+  <!-- RESULTS MODAL -->
+  <div class="modal-backdrop" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-emoji" id="modal-emoji">🎉</span>
+        <div class="modal-title" id="modal-title">Test Complete!</div>
+        <div class="modal-sub" id="modal-sub">Here's how you did</div>
+      </div>
+      <div class="new-best-badge" id="new-best-badge">🏆 New Personal Best!</div>
+      <div class="results-grid">
+        <div class="result-card">
+          <div class="r-label">WPM</div>
+          <div class="r-value wpm" id="r-wpm">0</div>
+          <div class="r-unit">words per minute</div>
+        </div>
+        <div class="result-card">
+          <div class="r-label">Accuracy</div>
+          <div class="r-value acc" id="r-acc">0%</div>
+          <div class="r-unit">correct keystrokes</div>
+        </div>
+        <div class="result-card">
+          <div class="r-label">Time</div>
+          <div class="r-value time" id="r-time">0s</div>
+          <div class="r-unit">total time</div>
+        </div>
+        <div class="result-card">
+          <div class="r-label">Errors</div>
+          <div class="r-value err" id="r-errors">0</div>
+          <div class="r-unit">total mistakes</div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-primary" onclick="tryAgain()">↺ Try Again</button>
+        <button class="btn btn-secondary" onclick="closeModal()">✕ Close</button>
+      </div>
     </div>
   </div>
-</div>
 
-<script>
-const TEXTS = {
-  easy: [
-    "The sun rose slowly over the quiet hills. Birds began to sing in the trees. A cool breeze moved through the tall grass. The day was just beginning and everything felt calm and still. The dog ran across the yard chasing a small red ball. Children played in the park near the old oak tree.",
-    "She walked to the store to buy some fresh bread and milk. The sky was clear and blue. She saw her friend Tom on the way home and they talked for a while. Later she made a nice cup of tea and sat down to read her book by the window.",
-    "Tom opened the door and stepped outside. The air was fresh and cold. He could see his breath in the morning light. He picked up the newspaper from the porch and went back inside. His cat was waiting for him in the warm kitchen by the stove."
-  ],
-  medium: [
-    "Human creativity flourishes in environments where curiosity is encouraged and failure is treated as a learning opportunity rather than a setback. Some of the greatest inventions in history began as accidents or misguided experiments. The ability to reframe mistakes as data points, rather than catastrophes, is what separates persistent innovators from those who give up after their first obstacle.",
-    "The digital revolution has transformed the way we communicate, work, and experience the world around us. Social networks connect billions of people across continents, yet studies suggest that feelings of loneliness are more widespread than ever. This paradox raises important questions about the nature of human connection and whether technology enriches or diminishes our most fundamental social needs.",
-    "Mountain ecosystems are among the most fragile environments on Earth, housing thousands of plant and animal species found nowhere else. Rising temperatures caused by climate change are pushing these species higher and higher up the slopes, compressing their habitats and threatening their survival. Conservation efforts must adapt quickly to address this accelerating crisis before irreversible damage is done."
-  ],
-  hard: [
-    "Quantum entanglement, described by Einstein as 'spooky action at a distance,' remains one of the most philosophically disquieting phenomena in modern physics. When two particles become entangled, measuring the spin of one instantaneously determines the spin of the other—regardless of the distance separating them. This non-locality challenges our classical intuitions about causality, information propagation, and the independence of spatially separated systems.",
-    "The epistemological foundations of empirical science rest on the principle of falsifiability, first articulated by Karl Popper as a demarcation criterion between scientific and non-scientific theories. A hypothesis that cannot in principle be refuted by any conceivable observation offers no predictive power and therefore contributes nothing to our understanding of the natural world. Consequently, metaphysical claims, while potentially meaningful in other contexts, are excluded from the domain of scientific inquiry.",
-    "Byzantine fault tolerance in distributed computing systems refers to the capacity of a network to continue operating correctly even when some nodes exhibit arbitrary, potentially adversarial behavior—transmitting conflicting information to different peers simultaneously. Achieving consensus under such conditions requires that no more than one-third of all nodes be faulty, a constraint derived from the three-general's problem and formalized in the seminal 1982 paper by Lamport, Shostak, and Pease."
-  ]
-};
+  <script>
+    const TEXTS = {
+      easy: [
+        "The sun rose slowly over the quiet hills. Birds began to sing in the trees. A cool breeze moved through the tall grass. The day was just beginning and everything felt calm and still. The dog ran across the yard chasing a small red ball. Children played in the park near the old oak tree.",
+        "She walked to the store to buy some fresh bread and milk. The sky was clear and blue. She saw her friend Tom on the way home and they talked for a while. Later she made a nice cup of tea and sat down to read her book by the window.",
+        "Tom opened the door and stepped outside. The air was fresh and cold. He could see his breath in the morning light. He picked up the newspaper from the porch and went back inside. His cat was waiting for him in the warm kitchen by the stove."
+      ],
+      medium: [
+        "Human creativity flourishes in environments where curiosity is encouraged and failure is treated as a learning opportunity rather than a setback. Some of the greatest inventions in history began as accidents or misguided experiments. The ability to reframe mistakes as data points, rather than catastrophes, is what separates persistent innovators from those who give up after their first obstacle.",
+        "The digital revolution has transformed the way we communicate, work, and experience the world around us. Social networks connect billions of people across continents, yet studies suggest that feelings of loneliness are more widespread than ever. This paradox raises important questions about the nature of human connection and whether technology enriches or diminishes our most fundamental social needs.",
+        "Mountain ecosystems are among the most fragile environments on Earth, housing thousands of plant and animal species found nowhere else. Rising temperatures caused by climate change are pushing these species higher and higher up the slopes, compressing their habitats and threatening their survival. Conservation efforts must adapt quickly to address this accelerating crisis before irreversible damage is done."
+      ],
+      hard: [
+        "Quantum entanglement, described by Einstein as 'spooky action at a distance,' remains one of the most philosophically disquieting phenomena in modern physics. When two particles become entangled, measuring the spin of one instantaneously determines the spin of the other—regardless of the distance separating them. This non-locality challenges our classical intuitions about causality, information propagation, and the independence of spatially separated systems.",
+        "The epistemological foundations of empirical science rest on the principle of falsifiability, first articulated by Karl Popper as a demarcation criterion between scientific and non-scientific theories. A hypothesis that cannot in principle be refuted by any conceivable observation offers no predictive power and therefore contributes nothing to our understanding of the natural world. Consequently, metaphysical claims, while potentially meaningful in other contexts, are excluded from the domain of scientific inquiry.",
+        "Byzantine fault tolerance in distributed computing systems refers to the capacity of a network to continue operating correctly even when some nodes exhibit arbitrary, potentially adversarial behavior—transmitting conflicting information to different peers simultaneously. Achieving consensus under such conditions requires that no more than one-third of all nodes be faulty, a constraint derived from the three-general's problem and formalized in the seminal 1982 paper by Lamport, Shostak, and Pease."
+      ]
+    };
 
-const DURATIONS = { easy: 60, medium: 60, hard: 90 };
-const KB_ROWS = [
-  ['q','w','e','r','t','y','u','i','o','p'],
-  ['a','s','d','f','g','h','j','k','l'],
-  ['z','x','c','v','b','n','m']
-];
+    const DURATIONS = { easy: 60, medium: 60, hard: 90 };
+    const KB_ROWS = [
+      ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
+      ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
+      ['z', 'x', 'c', 'v', 'b', 'n', 'm']
+    ];
 
-let state = {
-  diff: 'easy',
-  mode: 'timed',
-  text: '',
-  typed: '',
-  started: false,
-  running: false,
-  paused: false,
-  finished: false,
-  timer: null,
-  timeLeft: 60,
-  totalTime: 60,
-  elapsed: 0,
-  errors: 0,
-  errorMap: {},
-  textIndex: 0
-};
+    let state = {
+      diff: 'easy',
+      mode: 'timed',
+      text: '',
+      typed: '',
+      started: false,
+      running: false,
+      paused: false,
+      finished: false,
+      timer: null,
+      timeLeft: 60,
+      totalTime: 60,
+      elapsed: 0,
+      errors: 0,
+      errorMap: {},
+      textIndex: 0
+    };
 
-function getEl(id) { return document.getElementById(id); }
+    function getEl(id) { return document.getElementById(id); }
 
-function init() {
-  buildKeyboard();
-  loadNewText();
-  renderHistory();
-  updateBestDisplay();
-  document.addEventListener('keydown', handleGlobalKey);
-  getEl('click-hint').addEventListener('click', activateInput);
-  getEl('click-hint').addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' ') activateInput(); });
-  getEl('hidden-input').addEventListener('input', handleInput);
-  getEl('pause-overlay').addEventListener('click', () => { if(state.paused) togglePause(); });
-  getEl('typing-card').addEventListener('click', e => {
-    if(!e.target.closest('#click-hint') && !e.target.closest('#pause-overlay')) {
-      if(state.started && !state.finished) getEl('hidden-input').focus();
+    function init() {
+      buildKeyboard();
+      loadNewText();
+      renderHistory();
+      updateBestDisplay();
+      document.addEventListener('keydown', handleGlobalKey);
+      getEl('click-hint').addEventListener('click', activateInput);
+      getEl('click-hint').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') activateInput(); });
+      getEl('hidden-input').addEventListener('input', handleInput);
+      getEl('pause-overlay').addEventListener('click', () => { if (state.paused) togglePause(); });
+      getEl('typing-card').addEventListener('click', e => {
+        if (!e.target.closest('#click-hint') && !e.target.closest('#pause-overlay')) {
+          if (state.started && !state.finished) getEl('hidden-input').focus();
+        }
+      });
+      document.querySelectorAll('.diff-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          state.diff = btn.dataset.diff;
+          resetTest();
+        });
+      });
+      document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          state.mode = btn.dataset.mode;
+          resetTest();
+        });
+      });
     }
-  });
-  document.querySelectorAll('.diff-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.diff-btn').forEach(b=>b.classList.remove('active'));
-      btn.classList.add('active');
-      state.diff = btn.dataset.diff;
-      resetTest();
-    });
-  });
-  document.querySelectorAll('.mode-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
-      btn.classList.add('active');
-      state.mode = btn.dataset.mode;
-      resetTest();
-    });
-  });
-}
 
-function handleGlobalKey(e) {
-  if(state.finished) return;
-  if(getEl('modal').classList.contains('open')) return;
-  if(!state.started && !['Tab','Escape','F5'].includes(e.key)) {
-    activateInput();
-    return;
-  }
-}
-
-function loadNewText() {
-  const arr = TEXTS[state.diff];
-  const idx = state.textIndex % arr.length;
-  state.text = arr[idx];
-  state.textIndex++;
-  renderText();
-}
-
-function renderText() {
-  const display = getEl('text-display');
-  display.innerHTML = state.text.split('').map((ch, i) => {
-    const cls = i===0 && !state.typed ? 'char cursor' : 'char';
-    return `<span class="${cls}" data-i="${i}">${ch === ' ' ? '&nbsp;' : ch}</span>`;
-  }).join('');
-}
-
-function buildKeyboard() {
-  const wrap = getEl('keyboard-mini');
-  wrap.innerHTML = '';
-  KB_ROWS.forEach(row => {
-    const rowDiv = document.createElement('div');
-    rowDiv.className = 'kb-row';
-    row.forEach(key => {
-      const k = document.createElement('div');
-      k.className = 'kb-key';
-      k.id = 'kb-' + key;
-      k.textContent = key;
-      rowDiv.appendChild(k);
-    });
-    wrap.appendChild(rowDiv);
-  });
-}
-
-function updateHeatmap() {
-  Object.keys(state.errorMap).forEach(key => {
-    const el = getEl('kb-' + key);
-    if(!el) return;
-    const count = state.errorMap[key];
-    const intensity = Math.min(count / 5, 1);
-    el.style.background = `rgba(248,113,113,${0.15 + intensity*0.65})`;
-    el.style.color = count > 0 ? 'var(--error)' : '';
-    el.style.borderColor = count > 0 ? 'rgba(248,113,113,0.4)' : '';
-    let badge = el.querySelector('.err-count');
-    if(count > 0) {
-      if(!badge) {
-        badge = document.createElement('span');
-        badge.className = 'err-count';
-        el.appendChild(badge);
-      }
-      badge.textContent = count > 9 ? '9+' : count;
-    }
-  });
-}
-
-function activateInput() {
-  getEl('click-hint').classList.add('hidden');
-  getEl('hidden-input').focus();
-  getEl('typing-card').classList.add('focused');
-  if(!state.started) {
-    getEl('start-btn').click();
-  }
-}
-
-function handleInput(e) {
-  if(!state.running || state.finished) return;
-  const input = getEl('hidden-input');
-  const typed = input.value;
-  state.typed = typed;
-  const len = typed.length;
-
-  // Reset keyboard styles handled through errorMap
-  let errors = 0;
-  for(let i=0; i<len; i++) {
-    if(typed[i] !== state.text[i]) {
-      errors++;
-      const ch = typed[i].toLowerCase();
-      if(/^[a-z]$/.test(ch)) {
-        state.errorMap[ch] = (state.errorMap[ch]||0) + 1;
+    function handleGlobalKey(e) {
+      if (state.finished) return;
+      if (getEl('modal').classList.contains('open')) return;
+      if (!state.started && !['Tab', 'Escape', 'F5'].includes(e.key)) {
+        activateInput();
+        return;
       }
     }
-  }
-  state.errors = errors;
 
-  // Update chars display
-  getEl('char-display').textContent = len;
-  getEl('err-display').textContent = errors;
-
-  // Accuracy
-  const acc = len > 0 ? Math.round(((len - errors) / len) * 100) : 100;
-  getEl('acc-display').textContent = acc + '%';
-
-  // WPM (live)
-  if(state.elapsed > 0) {
-    const words = typed.trim().split(/\s+/).filter(Boolean).length;
-    const wpm = Math.round((words / state.elapsed) * 60);
-    getEl('wpm-display').textContent = wpm;
-  }
-
-  renderChars(typed);
-  updateHeatmap();
-
-  // Check completion
-  if(len >= state.text.length) {
-    finishTest();
-  }
-
-  // Micro-interaction: error flash
-  if(len > 0 && typed[len-1] !== state.text[len-1]) {
-    getEl('typing-card').classList.add('shake');
-    setTimeout(()=>getEl('typing-card').classList.remove('shake'), 300);
-  }
-}
-
-function renderChars(typed) {
-  const spans = getEl('text-display').querySelectorAll('.char');
-  spans.forEach((span, i) => {
-    span.className = 'char';
-    if(i < typed.length) {
-      span.classList.add(typed[i] === state.text[i] ? 'correct' : 'error');
+    function loadNewText() {
+      const arr = TEXTS[state.diff];
+      const idx = state.textIndex % arr.length;
+      state.text = arr[idx];
+      state.textIndex++;
+      renderText();
     }
-    if(i === typed.length) span.classList.add('cursor');
-  });
-  // Scroll cursor into view
-  const cursor = getEl('text-display').querySelector('.cursor');
-  if(cursor) cursor.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-}
 
-function startTest() {
-  if(state.running) return;
-  state.started = true;
-  state.running = true;
-  state.paused = false;
-  state.finished = false;
-  state.errors = 0;
-  state.errorMap = {};
-  state.typed = '';
-  state.elapsed = 0;
-  state.totalTime = state.mode === 'timed' ? DURATIONS[state.diff] : 999;
-  state.timeLeft = state.totalTime;
-
-  getEl('hidden-input').value = '';
-  getEl('hidden-input').focus();
-  getEl('click-hint').classList.add('hidden');
-  getEl('typing-card').classList.add('focused');
-  getEl('start-btn').disabled = true;
-  getEl('pause-btn').disabled = false;
-
-  renderText();
-  buildKeyboard();
-  updateTimer();
-
-  if(state.mode === 'timed') {
-    state.timer = setInterval(tick, 1000);
-  } else {
-    state.timer = setInterval(() => { state.elapsed++; updateLiveWPM(); }, 1000);
-  }
-
-  // Activate stat cards
-  ['wpm-card','acc-card','err-card','char-card'].forEach(id => getEl(id).classList.add('active'));
-}
-
-function tick() {
-  if(!state.running || state.paused) return;
-  state.timeLeft--;
-  state.elapsed++;
-  updateTimer();
-  updateLiveWPM();
-  if(state.timeLeft <= 0) finishTest();
-}
-
-function updateLiveWPM() {
-  if(state.elapsed > 0) {
-    const typed = state.typed;
-    const words = typed.trim().split(/\s+/).filter(w=>w.length>0).length;
-    const wpm = Math.round((words / state.elapsed) * 60);
-    getEl('wpm-display').textContent = wpm;
-  }
-}
-
-function updateTimer() {
-  const t = state.mode === 'timed' ? state.timeLeft : state.elapsed;
-  const total = state.mode === 'timed' ? state.totalTime : Math.max(state.elapsed, 1);
-  getEl('timer-display').textContent = state.mode === 'timed' ? state.timeLeft : state.elapsed;
-  const circumference = 138.2;
-  const progress = state.mode === 'timed'
-    ? (state.timeLeft / state.totalTime)
-    : 1;
-  getEl('ring-fg').style.strokeDashoffset = circumference * (1 - progress);
-  // Progress bar = text completion
-  const pct = state.text.length > 0 ? (state.typed.length / state.text.length) * 100 : 0;
-  getEl('progress-bar').style.width = Math.min(pct, 100) + '%';
-}
-
-function togglePause() {
-  if(!state.started || state.finished) return;
-  state.paused = !state.paused;
-  getEl('pause-overlay').classList.toggle('show', state.paused);
-  getEl('pause-btn').textContent = state.paused ? '▶ Resume' : '⏸ Pause';
-  if(!state.paused) getEl('hidden-input').focus();
-}
-
-function finishTest() {
-  if(state.finished) return;
-  state.finished = true;
-  state.running = false;
-  clearInterval(state.timer);
-
-  const typed = state.typed;
-  const len = typed.length;
-  const errors = state.errors;
-  const correct = len - errors;
-  const acc = len > 0 ? Math.round((correct / len) * 100) : 0;
-  const timeTaken = state.elapsed;
-  const words = typed.trim().split(/\s+/).filter(w=>w.length>0).length;
-  const wpm = timeTaken > 0 ? Math.round((words / timeTaken) * 60) : 0;
-
-  ['wpm-card','acc-card','err-card','char-card'].forEach(id => getEl(id).classList.remove('active'));
-  getEl('start-btn').disabled = false;
-  getEl('pause-btn').disabled = true;
-
-  // Save to localStorage
-  const isNewBest = saveResult({ wpm, acc, errors, time: timeTaken, diff: state.diff });
-
-  // Show modal
-  getEl('r-wpm').textContent = wpm;
-  getEl('r-acc').textContent = acc + '%';
-  getEl('r-time').textContent = timeTaken + 's';
-  getEl('r-errors').textContent = errors;
-  getEl('modal-emoji').textContent = wpm > 60 ? '🚀' : wpm > 40 ? '🎉' : '💪';
-  getEl('modal-title').textContent = wpm > 60 ? 'Impressive!' : wpm > 40 ? 'Great Work!' : 'Keep Practicing!';
-  getEl('modal-sub').textContent = `${wpm} WPM · ${acc}% accuracy`;
-  getEl('new-best-badge').classList.toggle('show', isNewBest);
-  getEl('modal').classList.add('open');
-
-  renderHistory();
-  updateBestDisplay();
-}
-
-function saveResult(result) {
-  try {
-    const key = 'typeforge_history';
-    const best_key = 'typeforge_best_' + result.diff;
-    let history = JSON.parse(localStorage.getItem(key) || '[]');
-    history.unshift({ ...result, date: new Date().toLocaleDateString() });
-    if(history.length > 10) history = history.slice(0, 10);
-    localStorage.setItem(key, JSON.stringify(history));
-    const prev = parseInt(localStorage.getItem(best_key) || '0');
-    if(result.wpm > prev) {
-      localStorage.setItem(best_key, result.wpm);
-      return true;
+    function renderText() {
+      const display = getEl('text-display');
+      display.innerHTML = state.text.split('').map((ch, i) => {
+        const cls = i === 0 && !state.typed ? 'char cursor' : 'char';
+        return `<span class="${cls}" data-i="${i}">${ch === ' ' ? '&nbsp;' : ch}</span>`;
+      }).join('');
     }
-  } catch(e){}
-  return false;
-}
 
-function updateBestDisplay() {
-  try {
-    const bests = ['easy','medium','hard'].map(d => parseInt(localStorage.getItem('typeforge_best_'+d)||'0'));
-    const best = Math.max(...bests);
-    getEl('best-wpm-display').textContent = best > 0 ? best : '—';
-  } catch(e){}
-}
+    function buildKeyboard() {
+      const wrap = getEl('keyboard-mini');
+      wrap.innerHTML = '';
+      KB_ROWS.forEach(row => {
+        const rowDiv = document.createElement('div');
+        rowDiv.className = 'kb-row';
+        row.forEach(key => {
+          const k = document.createElement('div');
+          k.className = 'kb-key';
+          k.id = 'kb-' + key;
+          k.textContent = key;
+          rowDiv.appendChild(k);
+        });
+        wrap.appendChild(rowDiv);
+      });
+    }
 
-function renderHistory() {
-  try {
-    const key = 'typeforge_history';
-    const history = JSON.parse(localStorage.getItem(key) || '[]');
-    const section = getEl('history-section');
-    const list = getEl('history-list');
-    if(history.length === 0) { section.classList.remove('visible'); return; }
-    section.classList.add('visible');
-    list.innerHTML = history.slice(0,5).map(r =>
-      `<div class="history-item">
+    function updateHeatmap() {
+      Object.keys(state.errorMap).forEach(key => {
+        const el = getEl('kb-' + key);
+        if (!el) return;
+        const count = state.errorMap[key];
+        const intensity = Math.min(count / 5, 1);
+        el.style.background = `rgba(248,113,113,${0.15 + intensity * 0.65})`;
+        el.style.color = count > 0 ? 'var(--error)' : '';
+        el.style.borderColor = count > 0 ? 'rgba(248,113,113,0.4)' : '';
+        let badge = el.querySelector('.err-count');
+        if (count > 0) {
+          if (!badge) {
+            badge = document.createElement('span');
+            badge.className = 'err-count';
+            el.appendChild(badge);
+          }
+          badge.textContent = count > 9 ? '9+' : count;
+        }
+      });
+    }
+
+    function activateInput() {
+      getEl('click-hint').classList.add('hidden');
+      getEl('hidden-input').focus();
+      getEl('typing-card').classList.add('focused');
+      if (!state.started) {
+        getEl('start-btn').click();
+      }
+    }
+
+    function handleInput(e) {
+      if (!state.running || state.finished) return;
+      const input = getEl('hidden-input');
+      const typed = input.value;
+      state.typed = typed;
+      const len = typed.length;
+
+      // Reset keyboard styles handled through errorMap
+      let errors = 0;
+      for (let i = 0; i < len; i++) {
+        if (typed[i] !== state.text[i]) {
+          errors++;
+          const ch = typed[i].toLowerCase();
+          if (/^[a-z]$/.test(ch)) {
+            state.errorMap[ch] = (state.errorMap[ch] || 0) + 1;
+          }
+        }
+      }
+      state.errors = errors;
+
+      // Update chars display
+      getEl('char-display').textContent = len;
+      getEl('err-display').textContent = errors;
+
+      // Accuracy
+      const acc = len > 0 ? Math.round(((len - errors) / len) * 100) : 100;
+      getEl('acc-display').textContent = acc + '%';
+
+      // WPM (live)
+      if (state.elapsed > 0) {
+        const words = typed.trim().split(/\s+/).filter(Boolean).length;
+        const wpm = Math.round((words / state.elapsed) * 60);
+        getEl('wpm-display').textContent = wpm;
+      }
+
+      renderChars(typed);
+      updateHeatmap();
+
+      // Check completion
+      if (len >= state.text.length) {
+        finishTest();
+      }
+
+      // Micro-interaction: error flash
+      if (len > 0 && typed[len - 1] !== state.text[len - 1]) {
+        getEl('typing-card').classList.add('shake');
+        setTimeout(() => getEl('typing-card').classList.remove('shake'), 300);
+      }
+    }
+
+    function renderChars(typed) {
+      const spans = getEl('text-display').querySelectorAll('.char');
+      spans.forEach((span, i) => {
+        span.className = 'char';
+        if (i < typed.length) {
+          span.classList.add(typed[i] === state.text[i] ? 'correct' : 'error');
+        }
+        if (i === typed.length) span.classList.add('cursor');
+      });
+      // Scroll cursor into view
+      const cursor = getEl('text-display').querySelector('.cursor');
+      if (cursor) cursor.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    }
+
+    function startTest() {
+      if (state.running) return;
+      state.started = true;
+      state.running = true;
+      state.paused = false;
+      state.finished = false;
+      state.errors = 0;
+      state.errorMap = {};
+      state.typed = '';
+      state.elapsed = 0;
+      state.totalTime = state.mode === 'timed' ? DURATIONS[state.diff] : 999;
+      state.timeLeft = state.totalTime;
+
+      getEl('hidden-input').value = '';
+      getEl('hidden-input').focus();
+      getEl('click-hint').classList.add('hidden');
+      getEl('typing-card').classList.add('focused');
+      getEl('start-btn').disabled = true;
+      getEl('pause-btn').disabled = false;
+
+      renderText();
+      buildKeyboard();
+      updateTimer();
+
+      if (state.mode === 'timed') {
+        state.timer = setInterval(tick, 1000);
+      } else {
+        state.timer = setInterval(() => { state.elapsed++; updateLiveWPM(); }, 1000);
+      }
+
+      // Activate stat cards
+      ['wpm-card', 'acc-card', 'err-card', 'char-card'].forEach(id => getEl(id).classList.add('active'));
+    }
+
+    function tick() {
+      if (!state.running || state.paused) return;
+      state.timeLeft--;
+      state.elapsed++;
+      updateTimer();
+      updateLiveWPM();
+      if (state.timeLeft <= 0) finishTest();
+    }
+
+    function updateLiveWPM() {
+      if (state.elapsed > 0) {
+        const typed = state.typed;
+        const words = typed.trim().split(/\s+/).filter(w => w.length > 0).length;
+        const wpm = Math.round((words / state.elapsed) * 60);
+        getEl('wpm-display').textContent = wpm;
+      }
+    }
+
+    function updateTimer() {
+      const t = state.mode === 'timed' ? state.timeLeft : state.elapsed;
+      const total = state.mode === 'timed' ? state.totalTime : Math.max(state.elapsed, 1);
+      getEl('timer-display').textContent = state.mode === 'timed' ? state.timeLeft : state.elapsed;
+      const circumference = 138.2;
+      const progress = state.mode === 'timed'
+        ? (state.timeLeft / state.totalTime)
+        : 1;
+      getEl('ring-fg').style.strokeDashoffset = circumference * (1 - progress);
+      // Progress bar = text completion
+      const pct = state.text.length > 0 ? (state.typed.length / state.text.length) * 100 : 0;
+      getEl('progress-bar').style.width = Math.min(pct, 100) + '%';
+    }
+
+    function togglePause() {
+      if (!state.started || state.finished) return;
+      state.paused = !state.paused;
+      getEl('pause-overlay').classList.toggle('show', state.paused);
+      getEl('pause-btn').textContent = state.paused ? '▶ Resume' : '⏸ Pause';
+      if (!state.paused) getEl('hidden-input').focus();
+    }
+
+    function finishTest() {
+      if (state.finished) return;
+      state.finished = true;
+      state.running = false;
+      clearInterval(state.timer);
+
+      const typed = state.typed;
+      const len = typed.length;
+      const errors = state.errors;
+      const correct = len - errors;
+      const acc = len > 0 ? Math.round((correct / len) * 100) : 0;
+      const timeTaken = state.elapsed;
+      const words = typed.trim().split(/\s+/).filter(w => w.length > 0).length;
+      const wpm = timeTaken > 0 ? Math.round((words / timeTaken) * 60) : 0;
+
+      ['wpm-card', 'acc-card', 'err-card', 'char-card'].forEach(id => getEl(id).classList.remove('active'));
+      getEl('start-btn').disabled = false;
+      getEl('pause-btn').disabled = true;
+
+      // Save to localStorage
+      const isNewBest = saveResult({ wpm, acc, errors, time: timeTaken, diff: state.diff });
+
+      // Show modal
+      getEl('r-wpm').textContent = wpm;
+      getEl('r-acc').textContent = acc + '%';
+      getEl('r-time').textContent = timeTaken + 's';
+      getEl('r-errors').textContent = errors;
+      getEl('modal-emoji').textContent = wpm > 60 ? '🚀' : wpm > 40 ? '🎉' : '💪';
+      getEl('modal-title').textContent = wpm > 60 ? 'Impressive!' : wpm > 40 ? 'Great Work!' : 'Keep Practicing!';
+      getEl('modal-sub').textContent = `${wpm} WPM · ${acc}% accuracy`;
+      getEl('new-best-badge').classList.toggle('show', isNewBest);
+      getEl('modal').classList.add('open');
+
+      renderHistory();
+      updateBestDisplay();
+    }
+
+    function saveResult(result) {
+      try {
+        const key = 'typeforge_history';
+        const best_key = 'typeforge_best_' + result.diff;
+        let history = JSON.parse(localStorage.getItem(key) || '[]');
+        history.unshift({ ...result, date: new Date().toLocaleDateString() });
+        if (history.length > 10) history = history.slice(0, 10);
+        localStorage.setItem(key, JSON.stringify(history));
+        const prev = parseInt(localStorage.getItem(best_key) || '0');
+        if (result.wpm > prev) {
+          localStorage.setItem(best_key, result.wpm);
+          return true;
+        }
+      } catch (e) { }
+      return false;
+    }
+
+    function updateBestDisplay() {
+      try {
+        const bests = ['easy', 'medium', 'hard'].map(d => parseInt(localStorage.getItem('typeforge_best_' + d) || '0'));
+        const best = Math.max(...bests);
+        getEl('best-wpm-display').textContent = best > 0 ? best : '—';
+      } catch (e) { }
+    }
+
+    function renderHistory() {
+      try {
+        const key = 'typeforge_history';
+        const history = JSON.parse(localStorage.getItem(key) || '[]');
+        const section = getEl('history-section');
+        const list = getEl('history-list');
+        if (history.length === 0) { section.classList.remove('visible'); return; }
+        section.classList.add('visible');
+        list.innerHTML = history.slice(0, 5).map(r =>
+          `<div class="history-item">
         <span class="h-wpm">${r.wpm} WPM</span>
         <span class="h-acc">${r.acc}%</span>
         <span class="h-diff ${r.diff}">${r.diff}</span>
         <span>${r.time}s</span>
         <span class="h-date">${r.date}</span>
       </div>`
-    ).join('');
-  } catch(e){}
-}
+        ).join('');
+      } catch (e) { }
+    }
 
-function clearHistory() {
-  try {
-    localStorage.removeItem('typeforge_history');
-    ['easy','medium','hard'].forEach(d => localStorage.removeItem('typeforge_best_'+d));
-    renderHistory();
-    updateBestDisplay();
-  } catch(e){}
-}
+    function clearHistory() {
+      try {
+        localStorage.removeItem('typeforge_history');
+        ['easy', 'medium', 'hard'].forEach(d => localStorage.removeItem('typeforge_best_' + d));
+        renderHistory();
+        updateBestDisplay();
+      } catch (e) { }
+    }
 
-function resetTest() {
-  clearInterval(state.timer);
-  state = {
-    ...state,
-    typed: '', started: false, running: false, paused: false, finished: false,
-    timer: null, elapsed: 0, errors: 0, errorMap: {},
-    timeLeft: DURATIONS[state.diff], totalTime: DURATIONS[state.diff]
-  };
-  getEl('hidden-input').value = '';
-  getEl('wpm-display').textContent = '0';
-  getEl('acc-display').textContent = '100%';
-  getEl('err-display').textContent = '0';
-  getEl('char-display').textContent = '0';
-  getEl('timer-display').textContent = state.mode === 'timed' ? DURATIONS[state.diff] : '0';
-  getEl('ring-fg').style.strokeDashoffset = '0';
-  getEl('progress-bar').style.width = '0%';
-  getEl('start-btn').disabled = false;
-  getEl('pause-btn').disabled = true;
-  getEl('pause-btn').textContent = '⏸ Pause';
-  getEl('click-hint').classList.remove('hidden');
-  getEl('pause-overlay').classList.remove('show');
-  getEl('typing-card').classList.remove('focused');
-  ['wpm-card','acc-card','err-card','char-card'].forEach(id => getEl(id).classList.remove('active'));
-  loadNewText();
-  buildKeyboard();
-}
+    function resetTest() {
+      clearInterval(state.timer);
+      state = {
+        ...state,
+        typed: '', started: false, running: false, paused: false, finished: false,
+        timer: null, elapsed: 0, errors: 0, errorMap: {},
+        timeLeft: DURATIONS[state.diff], totalTime: DURATIONS[state.diff]
+      };
+      getEl('hidden-input').value = '';
+      getEl('wpm-display').textContent = '0';
+      getEl('acc-display').textContent = '100%';
+      getEl('err-display').textContent = '0';
+      getEl('char-display').textContent = '0';
+      getEl('timer-display').textContent = state.mode === 'timed' ? DURATIONS[state.diff] : '0';
+      getEl('ring-fg').style.strokeDashoffset = '0';
+      getEl('progress-bar').style.width = '0%';
+      getEl('start-btn').disabled = false;
+      getEl('pause-btn').disabled = true;
+      getEl('pause-btn').textContent = '⏸ Pause';
+      getEl('click-hint').classList.remove('hidden');
+      getEl('pause-overlay').classList.remove('show');
+      getEl('typing-card').classList.remove('focused');
+      ['wpm-card', 'acc-card', 'err-card', 'char-card'].forEach(id => getEl(id).classList.remove('active'));
+      loadNewText();
+      buildKeyboard();
+    }
 
-function newText() {
-  resetTest();
-}
+    function newText() {
+      resetTest();
+    }
 
-function tryAgain() {
-  closeModal();
-  resetTest();
-}
+    function tryAgain() {
+      closeModal();
+      resetTest();
+    }
 
-function closeModal() {
-  getEl('modal').classList.remove('open');
-}
+    function closeModal() {
+      getEl('modal').classList.remove('open');
+    }
 
-// Theme toggle
-getEl('theme-btn').addEventListener('click', () => {
-  document.body.classList.toggle('light');
-  getEl('theme-btn').textContent = document.body.classList.contains('light') ? '🌙' : '☀️';
-});
+    // Theme toggle
+    getEl('theme-btn').addEventListener('click', () => {
+      document.body.classList.toggle('light');
+      getEl('theme-btn').textContent = document.body.classList.contains('light') ? '🌙' : '☀️';
+    });
 
-// Close modal on backdrop click
-getEl('modal').addEventListener('click', e => {
-  if(e.target === getEl('modal')) closeModal();
-});
+    // Close modal on backdrop click
+    getEl('modal').addEventListener('click', e => {
+      if (e.target === getEl('modal')) closeModal();
+    });
 
-// Init
-init();
-</script>
+    // Init
+    init();
+  </script>
 </body>
-</html>=
+
+</html>
